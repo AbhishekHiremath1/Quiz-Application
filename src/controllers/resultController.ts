@@ -1,7 +1,6 @@
 import { Answer, Result } from "../models/types";
 import { getQuizById } from "./quizController";
 
-// const userAnswers: Map<number, Answer[]> = new Map()
 import { userAnswers } from "./answerController";
 let results: Result[] = []; // In-memory storage for results
 
@@ -27,6 +26,5 @@ export const getResultsByUserIdAndQuizId = (userId: number, quizId: number): Res
     }
 
     results.push(result)
-    console.log("results: ", results)
     return result
 };

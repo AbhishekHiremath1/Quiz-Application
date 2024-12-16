@@ -133,7 +133,7 @@ describe('Quiz Routes', () => {
         };
 
         (getQuizById as jest.Mock).mockReturnValue(mockQuiz);
-        const response = await request(app)
+        const response1 = await request(app)
             .post('/api/quizzes/1734271132012/answers')
             .send(answer)
             .expect(200);
@@ -143,7 +143,7 @@ describe('Quiz Routes', () => {
             .send(answer2)
             .expect(200);
 
-        expect(response.body).toEqual({
+        expect(response1.body).toEqual({
             message: 'Answer submitted successfully.',
             is_correct: true,
         });

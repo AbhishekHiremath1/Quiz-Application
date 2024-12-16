@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import { createQuiz, getQuizById } from '../controllers/quizController';
 import { Quiz, Answer, AnswerResponse } from '../models/types';
 import { submitAnswer } from '../controllers/answerController';
@@ -12,7 +12,6 @@ const router: any = Router();
 // Create a new quiz with validation
 router.post('/quizzes', createQuizValidations, (req: Request, res: Response) => {
     const errors = validationResult(req);
-    console.log("errors..... ", errors)
 
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -49,38 +48,11 @@ router.get('/quizzes/:id', (req: Request, res: Response) => {
     }));
 
     res.status(200).json({ id: quiz.id, title: quiz.title, questions: sanitizedQuestions });
-
-    // res.status(200).json({ ...quizWithoutAnswers, questions });
 });
-
-// Submit an answer for a specific question in a quiz
-// router.post('/quizzes/:id/answers', (req: Request, res: Response) => {
-//     const quizId = parseInt(req.params.id);
-
-//     const { question_id, selected_option }: Answer = req.body;
-
-//     const quiz = getQuizById(quizId);
-
-//     if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
-
-//     const question = quiz.questions.find(q => q.id === question_id);
-
-//     if (!question) return res.status(404).json({ message: 'Question not found' });
-
-//     // Check if the answer is correct
-//     const is_correct = question.correct_option === selected_option;
-
-//     res.status(200).json({
-//         is_correct,
-//         correct_answer: question.correct_option,
-//         message: is_correct ? 'Correct answer!' : 'Incorrect answer!',
-//     });
-// });
 
 // Submit an answer for a specific question in a quiz
 router.post('/quizzes/:id/answers', answerValidations, (req: Request, res: Response) => {
     const errors = validationResult(req);
-    console.log("errors..... ", errors)
 
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -106,11 +78,7 @@ router.post('/quizzes/:id/answers', answerValidations, (req: Request, res: Respo
             selected_option
         }
 
-        const userAnswers =submitAnswer(answer)
-        console.log("Submitted Answer....", userAnswers);
-
-
-        // if(!submittedAnswer) return res.status(400).json({ message: 'Answer not submitted' });
+        submitAnswer(answer)
 
         const response: AnswerResponse = {
             message: 'Answer submitted successfully.',
@@ -127,46 +95,6 @@ router.post('/quizzes/:id/answers', answerValidations, (req: Request, res: Respo
     }
 
 });
-
-// Get results for a specific quiz by user ID (mock implementation)
-// router.post('/quizzes/:id/results', (req: Request, res: Response) => {
-//     const quizId = parseInt(req.params.id);
-
-//     const { user_id, answers }: Result = req.body;
-
-//     // Calculate score based on answers provided by the user
-//     let score = 0;
-
-//     answers.forEach(answer => {
-//         const question = getQuizById(quizId)?.questions.find(q => q.id === answer.question_id);
-
-//         if (question && question.correct_option === answer.selected_option) {
-//             score++;
-//             answer.is_correct = true; // Mark as correct if it matches
-//         } else {
-//             answer.is_correct = false; // Mark as incorrect otherwise
-//         }
-
-//         // Ensure that we store the result correctly.
-//         submitResult({
-//             quiz_id: quizId,
-//             user_id,
-//             score,
-//             answers,
-//         });
-
-//         res.status(200).json({
-//             score,
-//             summary: answers,
-//         });
-
-//         return; // Exit after processing to avoid multiple responses.
-
-//      });
-
-//      // If no answers were processed.
-//      res.status(400).json({ message: 'No answers provided.' });
-// });
 
 // Get results for a specific quiz by user ID
 router.get('/quizzes/:quizId/results/:userId', (req: Request, res: Response) => {
